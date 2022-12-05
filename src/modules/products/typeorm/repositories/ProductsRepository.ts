@@ -1,6 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 import Product from '../entities/Product';
 
+//Esse repositorioe customizado
 @EntityRepository(Product)
 export class ProductRepository extends Repository<Product> {
   //todo meotodo async deve retornar uma Promise
