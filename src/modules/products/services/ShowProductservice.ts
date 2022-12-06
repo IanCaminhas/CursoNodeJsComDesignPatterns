@@ -8,10 +8,10 @@ interface IRequest {
 }
 
 class ShowProductService {
-  public async execute({ id }: IRequest): Promise<Product | undefined> {
+  public async execute({ id }: IRequest): Promise<Product> {
     const productsRepository = getCustomRepository(ProductRepository);
     //vai retornar um unico produto
-    const product = productsRepository.findOne(id);
+    const product = await productsRepository.findOne(id);
     //Tratamento caso nao encontrar nada
     if (!product) {
       throw new AppError('Product not found. ');
