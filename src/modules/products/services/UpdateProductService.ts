@@ -28,7 +28,8 @@ class UpdateProductService {
     const productExists = await productsRepository.findByName(name);
 
     //Estou verificando se o novo nome já existe
-    if (productExists) {
+    //O name que quero atualizar é diferente do name que já existe atualmente
+    if (productExists && name != product.name) {
       throw new AppError('There is already one product with this name');
     }
 
