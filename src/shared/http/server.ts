@@ -1,4 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
+//biblioteca que vai ser responsavel por tratar as execoes geradas a partir de uma promessa
+import 'express-async-errors';
 import cors from 'cors';
 import routes from './routes';
 import AppError from './errors/AppError';
@@ -6,12 +8,18 @@ import AppError from './errors/AppError';
 o metodo createConnection(). Por fim, create connection() vai importar as configurações de ormconfig.json*/
 import '@shared/typeorm';
 
+//importacao do celebrate para exibir todos os erros da aplicação
+import { errors } from 'celebrate';
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 app.use(routes);
+
+//se der algum erro pelo celebrate, será enviado para a nossa aplicação
+app.use(errors());
 
 /* Middleware abaixo: interceptar todas as mensagens da
 aplicação para customizar a apresentação do erro no front-end.
@@ -39,6 +47,6 @@ app.use(
   },
 );
 
-app.listen(3333, () =>{
+app.listen(3333, () => {
   console.log('server started on port 3333!');
 });
