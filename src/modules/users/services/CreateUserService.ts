@@ -11,22 +11,22 @@ interface IRequest {
 
 class CreateUserService {
   public async execute({ name, email, password }: IRequest): Promise<User> {
-    const userRepository = getCustomRepository(UsersRepository);
+    const usersRepository = getCustomRepository(UsersRepository);
 
     //email não pode ser repetido.
-    const emailExists = await userRepository.findByEmail(email);
+    const emailExists = await usersRepository.findByEmail(email);
 
     if (emailExists) {
       throw new AppError('Email address already user.');
     }
 
-    const user = userRepository.create({
+    const user = usersRepository.create({
       name,
       email,
       password,
     });
 
-    await userRepository.save(user);
+    await usersRepository.save(user);
     return user;
   }
 }

@@ -1,15 +1,15 @@
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 import CreateUserService from '../services/CreateUserService';
 import ListUserService from '../services/ListUserService';
 
-export default class usersController {
+export default class UsersController {
   public async index(request: Request, response: Response): Promise<Response> {
     const listUser = new ListUserService();
-    const users = listUser.execute();
+    const users = await listUser.execute();
     return response.json(users);
   }
 
-  public async create(request: Request): Promise<Response> {
+  public async create(request: Request, response: Response): Promise<Response> {
     const { name, email, password } = request.body;
 
     const createUser = new CreateUserService();

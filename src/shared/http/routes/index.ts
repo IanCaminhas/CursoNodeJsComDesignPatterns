@@ -1,4 +1,5 @@
 import productsRouter from '@modules/products/routes/products.routes';
+import usersRouter from '@modules/users/routes/users.routes';
 import { Router } from 'express';
 
 const routes = Router();
@@ -8,11 +9,13 @@ const routes = Router();
   Exemplo: /products/id/-> :id foi defindo em products.routes.ts
 */
 routes.use('/products', productsRouter);
+routes.use('/users', usersRouter);
+
+export default routes;
+
 /*
 Rota de teste
 routes.get('/', (request, response) => {
   return response.json({ message: 'Hello Dev!' });
 });
 */
-
-export default routes;
