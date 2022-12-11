@@ -28,4 +28,4 @@ export default {
       callback(null, filename);
     }, //vai definir de que forma agente vai compor o nome do arquivo
   }), //ou seja, armazenar em um disco do servidor
-}
+};
