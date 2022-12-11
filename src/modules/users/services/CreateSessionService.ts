@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { getCustomRepository } from 'typeorm';
 import User from '../typeorm/entities/User';
 import UsersRepository from '../typeorm/repositories/UsersRepository';
+import authConfig from '@config/auth';
 
 interface IRequest {
   email: string;
@@ -47,10 +48,11 @@ class CreateSessionsService {
             posso acessar o site md5 generator e gerar o secret https://www.md5hashgenerator.com/
             Nesse site, digite qualqur coisa e gera um hash MD5. Exemplo a digitar: ndkjfnkjhfkjdhfjkdhfirh
         3 - Um objeto com demais configurações exigidas para o token.
+        4 - authConfig é de uso global. Está dentro da pasta config
         */
-    const token = sign({}, 'cb213613aaee972824a8841a7affacdb', {
+    const token = sign({}, authConfig.jwt.secret, {
       subject: user.id, //o token a ser usado é o id do usuario
-      expiresIn: '1d', //Por quanto tempo esse token vai estar válido ? 1 dia(24h). Ele exprira, aí o usuário vai precisar autenticar novamente para gerar um novo token
+      expiresIn: authConfig.jwt.experiesIn,
     });
 
     return {
