@@ -8,11 +8,11 @@ import fs from 'fs';
 
 interface IRequest {
   user_id: string;
-  avatarFilneName: string;
+  avatarFileName: string;
 }
 
 class UpdateUserAvatarService {
-  public async execute({ user_id, avatarFilneName }: IRequest): Promise<User> {
+  public async execute({ user_id, avatarFileName }: IRequest): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository);
     /*Pra fazer o upload do avatar na aplicação: token valido na aplicação,
     tiver autenticado(user_id tem que ser informado, ou seja, tem que ser encontrado pelo aplicação)
@@ -26,7 +26,7 @@ class UpdateUserAvatarService {
       throw new AppError('User not found. ');
     }
 
-    // user tem avaltar atualmente ?
+    // user tem avatar atualmente ?
     if (user.avatar) {
       //vou pegar o caminho de onde o arquivo esta armazenado
       const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
@@ -38,7 +38,7 @@ class UpdateUserAvatarService {
       }
     }
     //apos as verificações, atualizar avatar
-    user.avatar = avatarFilneName;
+    user.avatar = avatarFileName;
     //depois, salvar
     await usersRepository.save(user);
 
