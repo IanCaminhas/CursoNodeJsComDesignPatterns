@@ -2,6 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import UserToken from '../entities/UserToken';
 
 @EntityRepository(UserToken)
+//Repository de tokens para recuperacao de senhas
 class UserTokensRepository extends Repository<UserToken> {
   //Pesquisar pelo token
   public async findByToken(token: string): Promise<UserToken | undefined> {
