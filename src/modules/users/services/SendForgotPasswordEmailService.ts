@@ -23,6 +23,8 @@ class SendForgotPasswordEmailService {
     }
     //se o user existir, gere um token
     const token = await userTokensRepository.generate(user.id);
+
+    console.log(token);
   }
 }
 

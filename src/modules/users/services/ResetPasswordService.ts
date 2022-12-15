@@ -20,7 +20,7 @@ class ResetPasswordService {
     const usersRepository = getCustomRepository(UsersRepository);
     const userTokensRepository = getCustomRepository(UserTokensRepository);
     //Verifica a existencia do token
-    const userToken = userTokensRepository.findByToken(token);
+    const userToken = await userTokensRepository.findByToken(token);
     //se o token nao existir, lança a exception: token não existe
     if (!userToken) {
       throw new AppError('User Token does not exists.');
@@ -46,6 +46,8 @@ class ResetPasswordService {
 
     // Como a senha não está criptografada, vamos fazer isso.
     user.password = await hash(password, 8);
+    //Depois de pegar a nova senha, salvar a nova senha
+    await usersRepository.save(user);
   }
 }
 
