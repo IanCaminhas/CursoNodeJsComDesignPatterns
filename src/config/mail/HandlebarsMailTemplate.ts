@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-
+import fs from 'fs';
 //criação de uma interface com propriedades dinâmicas
 interface ITemplateVariable {
   /*
@@ -12,7 +12,12 @@ interface ITemplateVariable {
 }
 
 interface IParseMailTemplate {
-  template: string; //vai ser o html
+  /*
+  template: string; //antes o template era uma string: template: `Olá {{name}}: {{token}}`.
+            Essa string ficava em SendForgotPasswordEmailService.
+            template agora precisa receber um arquivo .hbs
+  */
+  file: string;
   //objetivo de variables -> deixar o mais genérico possível
   variables: ITemplateVariable; //não consigo prever a qtd de variables, tampouco quais variabels. Solução: criação de uma interface para valores dinâmicos
 }
@@ -31,12 +36,13 @@ export default class HandlebarsMailTemplate {
   Solução: criar uma interface
   */
 
-  public async parse({
-    template,
-    variables,
-  }: IParseMailTemplate): Promise<string> {
-    const parseTemplate = Handlebars.compile(template);
+  public async parse({ file, variables }: IParseMailTemplate): Promise<string> {
+    //agora preciso ler o conteudo do arquivo para que seja realizado o parser
+    const templateFileContent = await fs.promises.readFile(file, {
+      encoding: 'utf-8',
+    });
 
+    const parseTemplate = Handlebars.compile(templateFileContent);
     return parseTemplate(variables);
   }
 }
