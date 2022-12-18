@@ -23,13 +23,25 @@ class SendForgotPasswordEmailService {
       throw new AppError('User does not exists.');
     }
     //se o user existir, gere um token
-    const token = await userTokensRepository.generate(user.id);
+    const { token } = await userTokensRepository.generate(user.id);
 
     // console.log(token);
 
     await EtherealMail.sendMail({
-      to: email, //para quem vou enviar o e-mail ?
-      body: `Solicitação de redefinição de senha recebida1: ${token?.token}`,
+      to: {
+        //para quem vou enviar o e-mail ?
+        name: user.name,
+        email: user.email,
+      },
+      subject: '[API Vendas] Recuperação de Senha',
+      templateData: {
+        //no final, vamos ter o html construído
+        template: `Olá {{name}}: {{token}}`, //Handlebars usa {{}}
+        variables: {
+          name: user.name,
+          token,
+        },
+      },
     });
   }
 }
