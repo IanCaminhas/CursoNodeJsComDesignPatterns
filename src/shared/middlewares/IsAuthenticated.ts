@@ -52,7 +52,7 @@ export default function isAuthenticated(
       {
         iat: 1670755186, -> timestamp de quando o token foi criado
         exp: 1670841586, -> timestamp do momento que o token vai expirar
-        sub: '3de08c16-8962-42bd-a376-47fc4abeace4' -> o di do usuário/dono do token/ fica em subject
+        sub: '3de08c16-8962-42bd-a376-47fc4abeace4' -> o id do usuário/dono do token/ fica em subject
         console.log(decodedToken);
         Ao pegar o sub, facilita as operações... Pois já vou ter em mãos o id do usuário
         iat, exp e sub foram inclusos na interface TokenPayload

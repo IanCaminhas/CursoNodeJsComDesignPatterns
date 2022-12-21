@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import CreateCustomerService from '../services/CreateCustomerService';
+import DeleteCustomerService from '../services/DeleteCustomerService';
 import ListCustomerService from '../services/ListCustomerService';
 import ShowCustomerService from '../services/ShowCustomerService';
 import UpdateCustomerService from '../services/UpdateCustomerService';
-import DeleteCostumerService from '../services/DeleteCustomerService';
 
 export default class CustomersController {
   public async index(request: Request, response: Response): Promise<Response> {
@@ -16,7 +16,9 @@ export default class CustomersController {
 
   public async show(request: Request, response: Response): Promise<Response> {
     const { id } = request.params;
+
     const showCustomer = new ShowCustomerService();
+
     const customer = await showCustomer.execute({ id });
 
     return response.json(customer);
@@ -39,9 +41,9 @@ export default class CustomersController {
     const { name, email } = request.body;
     const { id } = request.params;
 
-    const updateCostumer = new UpdateCustomerService();
+    const updateCustomer = new UpdateCustomerService();
 
-    const customer = await updateCostumer.execute({
+    const customer = await updateCustomer.execute({
       id,
       name,
       email,
@@ -53,11 +55,10 @@ export default class CustomersController {
   public async delete(request: Request, response: Response): Promise<Response> {
     const { id } = request.params;
 
-    const deleteCostumer = new DeleteCostumerService();
+    const deleteCustomer = new DeleteCustomerService();
 
-    await deleteCostumer.execute({ id });
+    await deleteCustomer.execute({ id });
 
-    //retornando um array vazio como response
     return response.json([]);
   }
 }
