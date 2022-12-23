@@ -22,11 +22,16 @@ class CreateOrderService {
     const customersRepository = getCustomRepository(CustomersRepository);
     const productsRepository = getCustomRepository(ProductRepository);
 
+    //verificar se o cliente existe
     const customerExists = await customersRepository.findById(customer_id);
-
     if (customerExists) {
       throw new AppError('Could not find any customer with given id');
     }
+
+    //Vai retornar aqui todos os produtos que foram encontrados
+    //Mas se eonctrar algum id que não foi encontrado ?
+    const existsProducts = await productsRepository.findAllByIds(products);
+
   }
 }
 
