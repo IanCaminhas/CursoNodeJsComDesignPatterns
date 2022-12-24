@@ -1,4 +1,4 @@
-import Customers from '@modules/customers/typeorm/entities/Customer';
+import Customer from '@modules/customers/typeorm/entities/Customer';
 import {
   CreateDateColumn,
   Entity,
@@ -14,9 +14,9 @@ class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Customers)
+  @ManyToOne(() => Customer)
   @JoinColumn({ name: 'customer_id' })
-  customer: Customers;
+  customer: Customer;
 
   //lembre: é um array pq é @OneToMany
   /*

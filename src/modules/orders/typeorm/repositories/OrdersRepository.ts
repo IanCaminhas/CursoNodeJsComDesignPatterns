@@ -1,4 +1,4 @@
-import Customers from '@modules/customers/typeorm/entities/Customer';
+import Customer from '@modules/customers/typeorm/entities/Customer';
 import { EntityRepository, Repository } from 'typeorm';
 import Order from '../entities/Order';
 
@@ -14,7 +14,7 @@ interface IProduct {
 }
 
 interface IRequest {
-  customer: Customers;
+  customer: Customer;
   products: IProduct[];
 }
 

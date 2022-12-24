@@ -1,5 +1,4 @@
 import CustomersRepository from '@modules/customers/typeorm/repositories/CustomersRepository';
-import Product from '@modules/products/typeorm/entities/Product';
 import { ProductRepository } from '@modules/products/typeorm/repositories/ProductsRepository';
 import AppError from '@shared/http/errors/AppError';
 import { getCustomRepository } from 'typeorm';
@@ -63,6 +62,34 @@ class CreateOrderService {
         `The quantity ${quantityAvailable[0].quantity} is not available for ${quantityAvailable[0].id}. `,
       );
     }
+
+    /*depois de todas as verificações, vou montar o objeto
+    de cada produto recebido, pegar o preço(do cliente so recebo id e quantity)
+    */
+    //isso é um array com product_id,  quantity e price
+    const serializedProducts = products.map(product => ({
+      product_id: product.id,
+      quantity: product.quantity,
+      price: existsProducts.filter(p => p.id === product.id)[0].price,
+    }));
+
+    const order = await ordersRepository.createOrder({
+      products: serializedProducts,
+      customer: customerExists,
+    });
+
+    const { order_products } = order;
+
+    //atualizando a quantidade no estoque
+    const updatedProductQuantity = order_products.map(product => ({
+      id: product.id,
+      quantity:
+        existsProducts.filter(p => p.id === product.id)[0].quantity -
+        product.quantity,
+    }));
+
+    await productsRepository.save(updatedProductQuantity);
+    return order;
   }
 }
 

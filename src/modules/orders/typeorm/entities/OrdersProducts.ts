@@ -22,6 +22,12 @@ class OrdersProducts {
   @JoinColumn({ name: 'product_id' }) //campo da tabela Order. campo que faço o relacionamento
   product: Product;
 
+  @Column()
+  order_id: string;
+
+  @Column()
+  product_id: string;
+
   @Column('decimal')
   price: number;
 
