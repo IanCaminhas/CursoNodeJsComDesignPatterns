@@ -1,4 +1,5 @@
 import CustomersRepository from '@modules/customers/typeorm/repositories/CustomersRepository';
+import Product from '@modules/products/typeorm/entities/Product';
 import { ProductRepository } from '@modules/products/typeorm/repositories/ProductsRepository';
 import AppError from '@shared/http/errors/AppError';
 import { getCustomRepository } from 'typeorm';
@@ -32,6 +33,23 @@ class CreateOrderService {
     //Mas se eonctrar algum id que não foi encontrado ?
     const existsProducts = await productsRepository.findAllByIds(products);
 
+    //se o array vier vazio...
+    if (!existsProducts.length) {
+      throw new AppError('Could not find any products with given ids');
+    }
+
+    const existsProductsIds = existsProducts.map(product => product.id);
+
+    //todos os ids foram encontrados ? existem produtos inexistentes ?
+    const checkInexistenteProducts = products.filter(
+      Product => !existsProductsIds.includes(Product.id),
+    );
+
+    if (checkInexistenteProducts.length) {
+      throw new AppError(
+        `Could not find product ${checkInexistenteProducts[0].id}.`,
+      );
+    }
   }
 }
 
