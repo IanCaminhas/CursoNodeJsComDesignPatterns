@@ -1,5 +1,3 @@
-import CustomersRepository from '@modules/customers/typeorm/repositories/CustomersRepository';
-import { ProductRepository } from '@modules/products/typeorm/repositories/ProductsRepository';
 import AppError from '@shared/http/errors/AppError';
 import { getCustomRepository } from 'typeorm';
 import Order from '../typeorm/entities/Order';
