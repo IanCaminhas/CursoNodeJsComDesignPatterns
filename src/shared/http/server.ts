@@ -43,6 +43,9 @@ app.use(
         message: error.message,
       });
     }
+
+    console.error(error);
+
     //se o erro não for da aplicação, ou seja, um erro desconhecido
     return response.status(500).json({
       status: 'error',

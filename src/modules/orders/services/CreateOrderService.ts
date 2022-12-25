@@ -3,7 +3,7 @@ import { ProductRepository } from '@modules/products/typeorm/repositories/Produc
 import AppError from '@shared/http/errors/AppError';
 import { getCustomRepository } from 'typeorm';
 import Order from '../typeorm/entities/Order';
-import { OrdersRepository } from '../typeorm/repositories/OrdersRepository';
+import OrdersRepository from '../typeorm/repositories/OrdersRepository';
 
 interface IProduct {
   id: string;
@@ -24,8 +24,8 @@ class CreateOrderService {
 
     //verificar se o cliente existe
     const customerExists = await customersRepository.findById(customer_id);
-    if (customerExists) {
-      throw new AppError('Could not find any customer with given id');
+    if (!customerExists) {
+      throw new AppError('Could not find any customer with the given id.');
     }
 
     //Vai retornar aqui todos os produtos que foram encontrados
@@ -34,32 +34,32 @@ class CreateOrderService {
 
     //se o array vier vazio...
     if (!existsProducts.length) {
-      throw new AppError('Could not find any products with given ids');
+      throw new AppError('Could not find any products with the given ids.');
     }
 
     const existsProductsIds = existsProducts.map(product => product.id);
 
     //todos os ids foram encontrados ? existem produtos inexistentes ?
-    const checkInexistenteProducts = products.filter(
-      Product => !existsProductsIds.includes(Product.id),
+    const checkInexistentProducts = products.filter(
+      product => !existsProductsIds.includes(product.id),
     );
 
-    if (checkInexistenteProducts.length) {
+    if (checkInexistentProducts.length) {
       throw new AppError(
-        `Could not find product ${checkInexistenteProducts[0].id}.`,
+        `Could not find product ${checkInexistentProducts[0].id}.`,
       );
     }
-
-    //existe qtd suficiente de cada produto ?
     const quantityAvailable = products.filter(
       product =>
         existsProducts.filter(p => p.id === product.id)[0].quantity <
         product.quantity,
     );
 
+    //existe qtd suficiente de cada produto ?
     if (quantityAvailable.length) {
       throw new AppError(
-        `The quantity ${quantityAvailable[0].quantity} is not available for ${quantityAvailable[0].id}. `,
+        `The quantity ${quantityAvailable[0].quantity}
+         is not available for ${quantityAvailable[0].id}.`,
       );
     }
 
@@ -74,21 +74,22 @@ class CreateOrderService {
     }));
 
     const order = await ordersRepository.createOrder({
-      products: serializedProducts,
       customer: customerExists,
+      products: serializedProducts,
     });
 
     const { order_products } = order;
 
     //atualizando a quantidade no estoque
     const updatedProductQuantity = order_products.map(product => ({
-      id: product.id,
+      id: product.product_id,
       quantity:
-        existsProducts.filter(p => p.id === product.id)[0].quantity -
+        existsProducts.filter(p => p.id === product.product_id)[0].quantity -
         product.quantity,
     }));
 
     await productsRepository.save(updatedProductQuantity);
+
     return order;
   }
 }
