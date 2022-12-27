@@ -11,9 +11,11 @@ import uploadConfig from '@config/upload';
 
 //importacao do celebrate para exibir todos os erros da aplicação
 import { errors } from 'celebrate';
+//É um middleware
+import { pagination } from 'typeorm-pagination';
 
 const app = express();
-
+app.use(pagination);
 app.use(cors());
 app.use(express.json());
 
