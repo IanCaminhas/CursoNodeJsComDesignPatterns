@@ -1,3 +1,5 @@
+import 'reflect-data';
+import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 //biblioteca que vai ser responsavel por tratar as execoes geradas a partir de uma promessa
 import 'express-async-errors';
