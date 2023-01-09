@@ -1,6 +1,6 @@
 import { getCustomRepository } from 'typeorm';
-import Customer from '../typeorm/entities/Customer';
-import CustomersRepository from '../typeorm/repositories/CustomersRepository';
+import Customer from '../infra/typeorm/entities/Customer';
+import CustomersRepository from '../infra/typeorm/repositories/CustomersRepository';
 
 /*
 A paginação deu errada. Diante do exposto, deixei a solução inicial que pode ser compilada abaixo.

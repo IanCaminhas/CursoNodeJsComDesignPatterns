@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import SendForgotPasswordEmailService from '../services/SendForgotPasswordEmailService';
+import SendForgotPasswordEmailService from '@modules/users/services/SendForgotPasswordEmailService';
 
 //controller de envio de e-mail para redefinição de senha
 export default class ForgotPasswordController {

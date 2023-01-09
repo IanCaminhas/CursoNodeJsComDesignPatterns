@@ -1,4 +1,4 @@
-import AppError from '@shared/http/errors/AppError';
+import AppError from '@shared/infra/http/errors/AppError';
 import { verify } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import authConfig from '@config/auth';

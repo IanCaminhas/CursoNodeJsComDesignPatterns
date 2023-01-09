@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 //vai armazenar os endereços IP's e qtd de requisições feitas.
 import Redis from 'ioredis';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
-import AppError from '@shared/http/errors/AppError';
+import AppError from '@shared/infra/http/errors/AppError';
 
 //é um middleware
 export default async function rateLimiter(
