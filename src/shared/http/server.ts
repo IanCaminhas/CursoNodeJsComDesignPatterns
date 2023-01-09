@@ -9,6 +9,7 @@ import AppError from './errors/AppError';
 o metodo createConnection(). Por fim, create connection() vai importar as configurações de ormconfig.json*/
 import '@shared/typeorm';
 import uploadConfig from '@config/upload';
+import rateLimiter from '@shared/middlewares/rateLimiter';
 
 //importacao do celebrate para exibir todos os erros da aplicação
 import { errors } from 'celebrate';
@@ -16,9 +17,11 @@ import { errors } from 'celebrate';
 import { pagination } from 'typeorm-pagination';
 
 const app = express();
-app.use(pagination);
 app.use(cors());
 app.use(express.json());
+//tem que ser um dos primeiros, pois ele que vai filtrar as requsições
+app.use(rateLimiter);
+app.use(pagination);
 
 //Quando for acessar a rota /files/nomeIMG da api, vai pegar o conteudo que esta no diretorio uploads. Aí vai subir no navegador.
 app.use('/files', express.static(uploadConfig.directory));
