@@ -1,5 +1,5 @@
 import { ICustomer } from '../models/ICostumer';
-//import { ICreateCustomer } from '../models/ICreateCustomer';
+import { ICreateCustomer } from '../models/ICreateCustomer';
 
 export interface ICustomersRepository {
   //ICustomer é uma interface da camada de domínio
@@ -8,6 +8,6 @@ export interface ICustomersRepository {
   findById(id: string): Promise<ICustomer | undefined>;
   findByEmail(email: string): Promise<ICustomer | undefined>;
   //esses dois metodos sao do typeorm
-  //create(data: ICreateCustomer): Promise<ICustomer>;
-  //save(customer: ICustomer): Promise<ICustomer>;
+  create(data: ICreateCustomer): Promise<ICustomer>;
+  save(customer: ICustomer): Promise<ICustomer>;
 }
