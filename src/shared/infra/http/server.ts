@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 //biblioteca que vai ser responsavel por tratar as execoes geradas a partir de uma promessa
@@ -8,6 +9,7 @@ import AppError from './errors/AppError';
 /*quando a aplicação subir, vai importar o typeorm\index.ts, vai chamar
 o metodo createConnection(). Por fim, create connection() vai importar as configurações de ormconfig.json*/
 import '@shared/infra/typeorm';
+import '@shared/container/index';
 import uploadConfig from '@config/upload';
 import rateLimiter from '@shared/middlewares/rateLimiter';
 

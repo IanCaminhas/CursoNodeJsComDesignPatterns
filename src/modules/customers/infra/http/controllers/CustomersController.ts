@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { container } from 'tsyringe';
 import CreateCustomerService from '../../../services/CreateCustomerService';
 import DeleteCustomerService from '../../../services/DeleteCustomerService';
 import ListCustomerService from '../../../services/ListCustomerService';
@@ -28,9 +29,13 @@ export default class CustomersController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { name, email } = request.body;
 
-    const customersRepository = new CustomersRepository();
+    //Antes era assim. Foi substituíodo por  const createCustomer = container.resolve(CreateCustomerService);
+    //const customersRepository = new CustomersRepository();
+    //const createCustomer = new CreateCustomerService(customersRepository);
 
-    const createCustomer = new CreateCustomerService(customersRepository);
+    //vai carregar o serviço. O service já tem uma injeção de dependência que é a chave: @inject('CustomersRepository')
+    //O container.resolve() chama o serviço CreateCustomerService. Esse CreateCustomerService é intejetado com @injectable() e @inject('CustomersRepository')
+    const createCustomer = container.resolve(CreateCustomerService);
 
     const customer = await createCustomer.execute({
       name,
