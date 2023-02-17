@@ -23,5 +23,5 @@ export default class RedisCache {
   public async recover<T>(key: string): Promise<T | null> {}
 
   //metodo para excluir o cache.
-  public async invalidate(key: string): Promise<void>{}
+  public async invalidate(key: string): Promise<void> {}
 }

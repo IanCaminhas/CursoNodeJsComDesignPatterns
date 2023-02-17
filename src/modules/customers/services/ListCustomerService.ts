@@ -1,6 +1,6 @@
-import { getCustomRepository } from 'typeorm';
+import { inject, injectable } from 'tsyringe';
+import { ICustomersRepository } from '../domain/repositories/ICustomersRepository';
 import Customer from '../infra/typeorm/entities/Customer';
-import CustomersRepository from '../infra/typeorm/repositories/CustomersRepository';
 
 /*
 A paginação deu errada. Diante do exposto, deixei a solução inicial que pode ser compilada abaixo.
@@ -24,11 +24,15 @@ class ListCustomerService {
   }
 }
 */
-
+@injectable()
 class ListCustomerService {
-  public async execute(): Promise<Customer[]> {
-    const customersRepository = getCustomRepository(CustomersRepository);
-    const customers = await customersRepository.find();
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRepository,
+  ) {}
+
+  public async execute(): Promise<Customer[] | undefined> {
+    const customers = await this.customersRepository.findAll();
     return customers;
   }
 }
