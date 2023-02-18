@@ -1,20 +1,12 @@
 import CustomersRepository from '@modules/customers/infra/typeorm/repositories/CustomersRepository';
 import { ProductRepository } from '@modules/products/infra/typeorm/repositories/ProductsRepository';
 import AppError from '@shared/infra/http/errors/AppError';
+import { injectable } from 'tsyringe';
 import { getCustomRepository } from 'typeorm';
 import Order from '../infra/typeorm/entities/Order';
 import OrdersRepository from '../infra/typeorm/repositories/OrdersRepository';
 
-interface IProduct {
-  id: string;
-  quantity: number;
-}
-
-interface IRequest {
-  customer_id: string;
-  products: IProduct[];
-}
-
+@injectable()
 class CreateOrderService {
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
     //Aqui precisaremos recuperar as orders, o cliente e os products da order
