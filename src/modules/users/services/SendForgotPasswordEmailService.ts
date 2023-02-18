@@ -1,30 +1,33 @@
 import AppError from '@shared/infra/http/errors/AppError';
-import { getCustomRepository } from 'typeorm';
 import path from 'path';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
-import UserTokensRepository from '../infra/typeorm/repositories/UserTokensRepository';
 import EtherealMail from '@config/mail/EtherealMail';
-
-interface IRequest {
-  email: string;
-}
+import { inject, injectable } from 'tsyringe';
+import { ISendForgotPasswordEmail } from '../domain/models/ISendForgotPasswordEmail';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IUserTokensRepository } from '../domain/repositories/IUserTokensRepository';
 
 //Service para enviar o link de recuperação de senha
+@injectable()
 class SendForgotPasswordEmailService {
-  //simplesmente vai enviar um email para o usuario. Por isso o Promise<void>
-  public async execute({ email }: IRequest): Promise<void> {
-    const usersRepository = getCustomRepository(UsersRepository);
-    const userTokensRepository = getCustomRepository(UserTokensRepository);
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
 
+    @inject('UserTokensRepository')
+    private userTokensRepository: IUserTokensRepository,
+  ) {}
+
+  //simplesmente vai enviar um email para o usuario. Por isso o Promise<void>
+  public async execute({ email }: ISendForgotPasswordEmail): Promise<void> {
     //esse email existe em algum usuario da aplicação?
-    const user = await usersRepository.findByEmail(email);
+    const user = await this.usersRepository.findByEmail(email);
 
     //se o usuario nao existir... gera uma exception
     if (!user) {
       throw new AppError('User does not exists.');
     }
     //se o user existir, gere um token
-    const { token } = await userTokensRepository.generate(user.id);
+    const { token } = await this.userTokensRepository.generate(user.id);
 
     // console.log(token);
     const forgotPasswrodTemplate = path.resolve(

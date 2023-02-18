@@ -1,33 +1,36 @@
 import AppError from '@shared/infra/http/errors/AppError';
-import { getCustomRepository } from 'typeorm';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
-import UserTokensRepository from '../infra/typeorm/repositories/UserTokensRepository';
 import { isAfter, addHours } from 'date-fns';
 import { hash } from 'bcryptjs';
-
-interface IRequest {
-  token: string;
-  password: string;
-}
+import { inject, injectable } from 'tsyringe';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IUserTokensRepository } from '../domain/repositories/IUserTokensRepository';
+import { IResetPassword } from '../domain/models/IResetPassword';
 
 //Service resp. por atualizar a senha o do user
 /* Verificar: se o token enviado é valido(da hora que foi enviado, já se passou 2 horas ?).
               Se passou de 2 horas, gerar a exception
               User existe na aplicação ? */
 //O password passado pelo user não está criptografado.
+@injectable()
 class ResetPasswordService {
-  public async execute({ token, password }: IRequest): Promise<void> {
-    const usersRepository = getCustomRepository(UsersRepository);
-    const userTokensRepository = getCustomRepository(UserTokensRepository);
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+
+    @inject('UserTokensRepository')
+    private userTokensRepository: IUserTokensRepository,
+  ) {}
+
+  public async execute({ token, password }: IResetPassword): Promise<void> {
     //Verifica a existencia do token
-    const userToken = await userTokensRepository.findByToken(token);
+    const userToken = await this.userTokensRepository.findByToken(token);
     //se o token nao existir, lança a exception: token não existe
     if (!userToken) {
       throw new AppError('User Token does not exists.');
     }
 
     //Token foi encontrado. blz. Vamos ver se o usuario existe na aplicação
-    const user = await usersRepository.findById(userToken.user_id);
+    const user = await this.usersRepository.findById(userToken.user_id);
 
     //Se nao encontrar o usuario, lanço a excepction: usuario nao existe.
     if (!user) {
@@ -47,7 +50,7 @@ class ResetPasswordService {
     // Como a senha não está criptografada, vamos fazer isso.
     user.password = await hash(password, 8);
     //Depois de pegar a nova senha, salvar a nova senha
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
   }
 }
 

@@ -1,5 +1,7 @@
-import Customer from '@modules/customers/typeorm/entities/Customer';
-import { EntityRepository, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
+import { ICreateOrder } from '@modules/orders/domain/models/ICreateOrder';
+import { IOrder } from '@modules/orders/domain/models/IOrder';
+import { IOrdersRepository } from '@modules/orders/domain/repositories/IOrdersRepository';
 import Order from '../entities/Order';
 
 /*
@@ -7,37 +9,32 @@ import Order from '../entities/Order';
   Para isso crio essa interface para servir de tipo em
   products: IProduct[]; em interface IRequest
 */
-interface IProduct {
-  product_id: string;
-  price: number;
-  quantity: number;
-}
 
-interface IRequest {
-  customer: Customer;
-  products: IProduct[];
-}
+class OrdersRepository implements IOrdersRepository {
+  private ormRepository: Repository<Order>;
 
-@EntityRepository(Order)
-class OrdersRepository extends Repository<Order> {
+  constructor() {
+    this.ormRepository = getRepository(Order);
+  }
+
+  async create({ customer, products }: ICreateOrder): Promise<IOrder> {
+    const order = this.ormRepository.create({
+      customer,
+      order_products: products,
+    });
+
+    await this.ormRepository.save(order);
+    return order;
+  }
+
   public async findById(id: string): Promise<Order | undefined> {
-    const order = this.findOne(id, {
+    const order = this.ormRepository.findOne(id, {
       /*estamos falando para p/ o findOne que
       é para trazer os dados da order(id,) do pedido e
       os dados relacionados ao id: order_products(produtos pedidos pelo cliente) e customer
       */
       relations: ['order_products', 'customer'],
     });
-    return order;
-  }
-
-  public async createOrder({ customer, products }: IRequest): Promise<Order> {
-    const order = this.create({
-      customer,
-      order_products: products,
-    });
-
-    await this.save(order);
     return order;
   }
 }

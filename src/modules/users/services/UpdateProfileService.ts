@@ -1,28 +1,26 @@
 import AppError from '@shared/infra/http/errors/AppError';
-import { getCustomRepository } from 'typeorm';
-import User from '../infra/typeorm/entities/User';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
 import { compare, hash } from 'bcryptjs';
-
-interface IRequest {
-  user_id: string;
-  name: string;
-  email: string;
-  password?: string;
-  old_password?: string;
-}
+import { inject, injectable } from 'tsyringe';
+import { IUpdateProfile } from '../domain/models/IUpdateProfile';
+import { IUser } from '../domain/models/IUser';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
 
 //serviço que vai atualizar o perfil do usuário
+@injectable()
 class UpdateProfileService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
+
   public async execute({
     user_id,
     name,
     email,
     password,
     old_password,
-  }: IRequest): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
-    const user = await usersRepository.findById(user_id);
+  }: IUpdateProfile): Promise<IUser> {
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError('User not found.');
@@ -35,7 +33,7 @@ class UpdateProfileService {
     tambem que o usuario pode nao atualizar o email, ou seja, esta passando mesmo e-mail. Se
     eu fizer a pesquisa, vai encontrar pois é um e-mail que o usuario ja usa*/
     //Em suma: se for o email de outro usuario, preciso disparar a excecao
-    const userUpdateEmail = await usersRepository.findByEmail(email);
+    const userUpdateEmail = await this.usersRepository.findByEmail(email);
     //userUpdateEmail.id != user.id -> vou usar um e-mail de outro usuario
     if (userUpdateEmail && userUpdateEmail.id != user.id) {
       throw new AppError('There is already one user with this email.');
@@ -61,7 +59,7 @@ class UpdateProfileService {
     user.name = name;
     user.email = email;
 
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
     return user;
   }
 }

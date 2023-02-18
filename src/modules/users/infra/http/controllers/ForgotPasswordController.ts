@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 import SendForgotPasswordEmailService from '@modules/users/services/SendForgotPasswordEmailService';
+import { container } from 'tsyringe';
 
 //controller de envio de e-mail para redefinição de senha
 export default class ForgotPasswordController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { email } = request.body;
 
-    const sendForgotPasswordEmail = new SendForgotPasswordEmailService();
+    const sendForgotPasswordEmail = container.resolve(
+      SendForgotPasswordEmailService,
+    );
 
     await sendForgotPasswordEmail.execute({
       email,

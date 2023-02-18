@@ -1,25 +1,29 @@
 import AppError from '@shared/infra/http/errors/AppError';
-import { getCustomRepository } from 'typeorm';
-import User from '../infra/typeorm/entities/User';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
 import path from 'path';
 import uploadConfig from '@config/upload';
 import fs from 'fs';
+import { inject, injectable } from 'tsyringe';
+import { IUpdateUserAvatar } from '../domain/models/IUpdateUserAvatar';
+import { IUser } from '../domain/models/IUser';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
 
-interface IRequest {
-  user_id: string;
-  avatarFileName: string;
-}
-
+@injectable()
 class UpdateUserAvatarService {
-  public async execute({ user_id, avatarFileName }: IRequest): Promise<User> {
-    const usersRepository = getCustomRepository(UsersRepository);
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
+
+  public async execute({
+    user_id,
+    avatarFileName,
+  }: IUpdateUserAvatar): Promise<IUser> {
     /*Pra fazer o upload do avatar na aplicação: token valido na aplicação,
     tiver autenticado(user_id tem que ser informado, ou seja, tem que ser encontrado pelo aplicação)
     O usuário está querendo atualizar um avatar já existente ou inserir o
     primeiro avatar ? se for atualizar, apagar o avatar e enviar um novo avatar
     */
-    const user = await usersRepository.findById(user_id);
+    const user = await this.usersRepository.findById(user_id);
 
     // se não encontrou um user, dispara a esception
     if (!user) {
@@ -40,7 +44,7 @@ class UpdateUserAvatarService {
     //apos as verificações, atualizar avatar
     user.avatar = avatarFileName;
     //depois, salvar
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
 
     return user;
   }
